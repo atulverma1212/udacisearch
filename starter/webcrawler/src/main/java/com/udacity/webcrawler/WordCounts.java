@@ -1,15 +1,11 @@
 package com.udacity.webcrawler;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility class that sorts the map of word counts.
  *
- * <p>TODO: Reimplement the sort() method using only the Stream API and lambdas and/or method
- *          references.
  */
 final class WordCounts {
 
@@ -18,26 +14,28 @@ final class WordCounts {
    * to the provided {@link WordCountComparator}, and includes only the top
    * {@param popluarWordCount} words and counts.
    *
-   * <p>TODO: Reimplement this method using only the Stream API and lambdas and/or method
-   *          references.
-   *
    * @param wordCounts       the unsorted map of word counts.
    * @param popularWordCount the number of popular words to include in the result map.
    * @return a map containing the top {@param popularWordCount} words and counts in the right order.
    */
   static Map<String, Integer> sort(Map<String, Integer> wordCounts, int popularWordCount) {
+    // Deprecated code for reference
+//    PriorityQueue<Map.Entry<String, Integer>> sortedCounts =
+//        new PriorityQueue<>(wordCounts.size(), wordCountComparator);
+//    sortedCounts.addAll(wordCounts.entrySet());
+//    Map<String, Integer> topCounts = new LinkedHashMap<>();
+//    for (int i = 0; i < Math.min(popularWordCount, wordCounts.size()); i++) {
+//      Map.Entry<String, Integer> entry = sortedCounts.poll();
+//      topCounts.put(entry.getKey(), entry.getValue());
+//    }
 
-    // TODO: Reimplement this method using only the Stream API and lambdas and/or method references.
-
-    PriorityQueue<Map.Entry<String, Integer>> sortedCounts =
-        new PriorityQueue<>(wordCounts.size(), new WordCountComparator());
-    sortedCounts.addAll(wordCounts.entrySet());
-    Map<String, Integer> topCounts = new LinkedHashMap<>();
-    for (int i = 0; i < Math.min(popularWordCount, wordCounts.size()); i++) {
-      Map.Entry<String, Integer> entry = sortedCounts.poll();
-      topCounts.put(entry.getKey(), entry.getValue());
-    }
-    return topCounts;
+    WordCountComparator wordCountComparator = new WordCountComparator();
+    return wordCounts.entrySet().stream()
+            .filter(Objects::nonNull)
+            .sorted(wordCountComparator)
+            .limit(Math.min(popularWordCount, wordCounts.size()))
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey, Map.Entry::getValue, (k, p) -> k, LinkedHashMap::new));
   }
 
   /**

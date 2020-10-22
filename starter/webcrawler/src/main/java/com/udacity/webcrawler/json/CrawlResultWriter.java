@@ -1,14 +1,19 @@
 package com.udacity.webcrawler.json;
 
-import java.io.Writer;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Utility class to write a {@link CrawlResult} to file.
  */
 public final class CrawlResultWriter {
   private final CrawlResult result;
+  private final static Logger logger = Logger.getLogger(CrawlResultWriter.class.getName());
 
   /**
    * Creates a new {@link CrawlResultWriter} that will write the given {@link CrawlResult}.
@@ -26,9 +31,13 @@ public final class CrawlResultWriter {
    * @param path the file path where the crawl result data should be written.
    */
   public void write(Path path) {
-    // This is here to get rid of the unused variable warning.
-    Objects.requireNonNull(path);
-    // TODO: Fill in this method.
+    logger.info("Initialized writing for Crawl Results to Path Provided: " + path.toString());
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(new BufferedWriter(new FileWriter(path.toString(), true)), this.result);
+    } catch (IOException ex) {
+      logger.severe("Error while writing the results to path provided: " + ex.getMessage());
+    }
   }
 
   /**
@@ -37,8 +46,14 @@ public final class CrawlResultWriter {
    * @param writer the destination where the crawl result data should be written.
    */
   public void write(Writer writer) {
-    // This is here to get rid of the unused variable warning.
-    Objects.requireNonNull(writer);
-    // TODO: Fill in this method.
+    logger.info("Initialized writing for Crawl Results to writer provided");
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+    try {
+      mapper.writeValue(writer, this.result);
+      writer.close();
+    } catch (IOException ex) {
+      logger.severe("Error while writing the results to writer provided: " + ex.getMessage());
+    }
   }
 }
