@@ -12,21 +12,43 @@ Q1. Run the web crawler using the configurations located at src/main/config/writ
     Why did the parser take more time when run with ParallelWebCrawler?
 
 
+    Ans:  Parallel parser also has to do some reflections, which is a heavy task as the compiler has to do some heavy
+          operations. That's why, although the difference was in milliseconds, but we can observe the effect of using
+          reflections in this crawler. In production code, these milliseconds difference may lead to a huge difference in seconds.
+
+
 Q2. Your manager ran your crawler on her old personal computer, using the configurations from Q1, and she notices that
     the sequential crawler actually outperforms the parallel crawler. She would like to know why.
 
     (a) Suggest one reason why the sequential web crawler was able to read more web pages than the parallel crawler.
         (Hint: Try setting "parallelism" to 1 in the JSON configs to simulate your manager's computer.)
 
+        Ans: More recursion, more URLs. But in sequential web crawler, it collects all the URLs first and then travel in a for loop.
+               whereas using recursion, we have to go back and forth between the URLs, return from called function if the URL has been visited.
+               So, sequential crawler was able to explore more URLs than recursion.
+
     (b) Suggest one scenario in which the parallel web crawler will almost certainly perform better than the sequential
         crawler. Why will it perform better?
+        Ans: If the system has mutli core like 8 or something and there are different different links in the website, then
+                the parallel web crawler will be able to go deep and deep and explore various URLs on different cores.
+                In short, when the depth of URLs (nested URls) is high and more cores are available, parallel web crawler will outperform
+                sequential web crawler.
 
 
 Q3. Analyze your method profiler through the lens of Aspect Oriented Programming, by answering the following questions:
 
     (a) What is the cross-cutting concern?
 
+        Cross cutting concerns are the concerns that are shared across various application modules like controller, repository and serviec layer code.
+        In our application, logging is a functionality that can be used across various modules. Whichever method is annotated with @Profiled annotation,
+        its running time will be recorded.
+
+
+
     (b) What are the join points?
+
+        A joinpoint is a candidate point in the Program Execution of the application where an aspect can be plugged in.
+        In our application, whichever method is @Profiled annotated, it is a candidate to become a join point.
 
 
 Q4. Identify three (3) different design patterns used in this project, and explain which interfaces, classes, and/or
@@ -34,5 +56,24 @@ Q4. Identify three (3) different design patterns used in this project, and expla
 
     For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
     anything, you can name two things you disliked.
+
+
+    1. Builder pattern: CrawlResult, CrawlerConfiguration, PageParser, ParserModule.
+
+    Like: CrawlerConfiguration has more number of class variables. It is suitable to use builder pattern there.
+    Dis: CrawlResult is not a suitable candidate class to use builder pattern. It could be a simple class without builder inside.
+
+
+    2. Proxy design/ Reflection: ProfilingMethodInterceptor, ProfilerImpl, ProfilerModule
+
+    Like: We can log the running time of method by using @Profiled annotation only.
+    Dis: Unnecessary use of relection pattern here. We can simply put loggers inside the method calling function and log its run time.
+            Though the reeflection affect is in milliseconds, but in production even it is not recommended.
+
+    3. Abstract Factory Pattern: PageParserFactory
+
+    Like: At the runtime, we are able to attach the factory with its implementation.
+    Dis: PageParserFactory is not a suitable candidate for it. A factory should have multiple implementations and at runtime we
+        can decide which implementation to use. Rather than this, PageParserFactoryImpl should be a Singleton service class.
 
 

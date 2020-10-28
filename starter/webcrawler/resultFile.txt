@@ -1,0 +1,9 @@
+{"wordCounts":{"udacity":257,"learning":112,"helped":110,"program":108,"nanodegree":105},"urlsVisited":3}
+{"wordCounts":{"udacity":257,"learning":112,"helped":110,"program":108,"nanodegree":105},"urlsVisited":3}
+{"wordCounts":{"udacity":257,"learning":112,"helped":110,"program":108,"nanodegree":105},"urlsVisited":3}
+{"wordCounts":{"learning":73,"data":57,"machine":47,"with":47,"program":45},"urlsVisited":2}
+{"wordCounts":{"udacity":257,"learning":112,"helped":110,"program":108,"nanodegree":105},"urlsVisited":3}
+{"wordCounts":{},"urlsVisited":1}
+{"wordCounts":{"learning":73,"data":57,"machine":47,"with":47,"program":45},"urlsVisited":2}
+{"wordCounts":{"udacity":257,"learning":112,"helped":110,"program":108,"nanodegree":105},"urlsVisited":3}
+{"wordCounts":{"learning":73,"data":57,"machine":47,"with":47,"program":45},"urlsVisited":2}

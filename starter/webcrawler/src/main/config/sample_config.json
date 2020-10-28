@@ -1,11 +1,11 @@
 {
-  "startPages": ["https://www.udacity.com/"],
+  "startPages": ["https://www.facebook.com/"],
   "ignoredUrls": ["https://blog.udacity.com/.*"],
   "ignoredWords": ["^.{1,3}$"],
   "parallelism": 4,
-  "implementationOverride": "com.udacity.webcrawler.SequentialWebCrawler",
   "maxDepth": 2,
   "timeoutSeconds": 1,
   "popularWordCount": 5,
-  "profileOutputPath": "profileData.txt"
+  "profileOutputPath": "profileData.txt",
+  "resultPath" : "resultFile.txt"
 }

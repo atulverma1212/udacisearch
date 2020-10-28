@@ -9,6 +9,7 @@ import com.udacity.webcrawler.json.CrawlResultWriter;
 import com.udacity.webcrawler.json.CrawlerConfiguration;
 import com.udacity.webcrawler.profiler.Profiler;
 import com.udacity.webcrawler.profiler.ProfilerModule;
+import org.jsoup.internal.StringUtil;
 
 import javax.inject.Inject;
 import java.io.BufferedWriter;
@@ -34,14 +35,21 @@ public final class WebCrawlerMain {
 
   private void run() throws Exception {
     Guice.createInjector(new WebCrawlerModule(config), new ProfilerModule()).injectMembers(this);
-
     CrawlResult result = crawler.crawl(config.getStartPages());
     CrawlResultWriter resultWriter = new CrawlResultWriter(result);
     Optional<String> resultPath = Optional.ofNullable(config.getResultPath());
-    if (resultPath.isPresent() && !resultPath.get().isBlank())
+    if (resultPath.isPresent() && !resultPath.get().isBlank()){
       resultWriter.write(Path.of(resultPath.get()));
-    else
+    } else {
       resultWriter.write(new OutputStreamWriter(System.out));
+    }
+
+    if (StringUtil.isBlank(config.getProfileOutputPath())) {
+      resultWriter.write(new OutputStreamWriter(System.out));
+    } else
+      profiler.writeData(Path.of(config.getProfileOutputPath()));
+
+
     // TODO: Write the profile data to a text file (or System.out if the file name is empty)
   }
 

@@ -30,11 +30,8 @@ public final class ConfigurationLoader {
    * @return the loaded {@link CrawlerConfiguration}.
    */
   public CrawlerConfiguration load() {
-    try {
-      BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toString()));
-      CrawlerConfiguration configuration = read(bufferedReader);
-      bufferedReader.close();
-      return configuration;
+    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toString()))){
+      return read(bufferedReader);
     } catch (IOException e) {
       logger.severe("Error while loading file: " + e.getMessage());
     }

@@ -33,8 +33,8 @@ public final class CrawlResultWriter {
   public void write(Path path) {
     logger.info("Initialized writing for Crawl Results to Path Provided: " + path.toString());
     ObjectMapper mapper = new ObjectMapper();
-    try {
-      mapper.writeValue(new BufferedWriter(new FileWriter(path.toString(), true)), this.result);
+    try (FileWriter writer = new FileWriter(path.toString(), true)){
+      mapper.writeValue(new BufferedWriter(writer), this.result);
     } catch (IOException ex) {
       logger.severe("Error while writing the results to path provided: " + ex.getMessage());
     }
@@ -51,7 +51,6 @@ public final class CrawlResultWriter {
     mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
     try {
       mapper.writeValue(writer, this.result);
-      writer.close();
     } catch (IOException ex) {
       logger.severe("Error while writing the results to writer provided: " + ex.getMessage());
     }

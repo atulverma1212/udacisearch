@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.regex.Pattern;
@@ -28,18 +29,18 @@ final class ParallelWebCrawler implements WebCrawler {
   private final List<Pattern> urlListToBeIgnored;
   private Instant endTime;
 
-  private final Set<String> urlsVisited = new HashSet<>();
+  private final ConcurrentSkipListSet<String> urlsVisited = new ConcurrentSkipListSet<>();
   private final ConcurrentHashMap<String, Integer> urlCountMap = new ConcurrentHashMap<>();
 
   @Inject
   ParallelWebCrawler(
-      Clock clock,
-      @Timeout Duration timeout,
-      @PopularWordCount int popularWordCount,
-      @TargetParallelism int threadCount,
-      PageParserFactory pageParserFactory,
-      @MaxDepth int maxDepth,
-      @IgnoredUrls List<Pattern> ignoredUrls) {
+          Clock clock,
+          @Timeout Duration timeout,
+          @PopularWordCount int popularWordCount,
+          @TargetParallelism int threadCount,
+          PageParserFactory pageParserFactory,
+          @MaxDepth int maxDepth,
+          @IgnoredUrls List<Pattern> ignoredUrls) {
     this.clock = clock;
     this.timeout = timeout;
     this.popularWordCount = popularWordCount;
@@ -72,10 +73,10 @@ final class ParallelWebCrawler implements WebCrawler {
     return urlsVisited.contains(url);
   }
 
-  synchronized
-  private void addToVisitedUrls(String url) {
-    urlsVisited.add(url);
-  }
+//  synchronized
+//  private void addToVisitedUrls(String url) {
+//    urlsVisited.add(url);
+//  }
 
   @Override
   public int getMaxParallelism() {
@@ -96,7 +97,7 @@ final class ParallelWebCrawler implements WebCrawler {
     protected Void compute() {
       if(crawlTaskDepth == 0 || clock.instant().isAfter(endTime))
         return null;
-      addToVisitedUrls(url);
+      urlsVisited.add(url);
       PageParser.Result parseResult = parserFactory.get(url).parse();
       parseResult.getWordCounts().forEach((key, value) ->
               urlCountMap.put(key, urlCountMap.getOrDefault(key, 0) + value));
